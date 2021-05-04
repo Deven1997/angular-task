@@ -1,0 +1,171 @@
+
+<ng-template #content let-modal>
+  <form #bookRecord = "ngForm" (ngSubmit) = "addRecord(bookRecord.value)">
+  <div class="modal-header">
+    <h2 class="modal-title">Add New Record</h2>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="container">
+      <div>
+          <div>
+          <mat-form-field>
+            <mat-label>Book Name</mat-label>
+            <input matInput ngModel name = "bookName" autocomplete="off" placeholder="Book Name" required>
+          </mat-form-field>
+          <mat-form-field class="float-right">
+            <mat-label>Author</mat-label>
+            <input matInput ngModel name = "author" autocomplete="off" placeholder="Author" required>
+          </mat-form-field>
+          <mat-form-field >
+            <mat-label>Ratings of the book</mat-label>
+            <input matInput ngModel name = "ratings" autocomplete="off" type="number" placeholder="e.g. 4.5" required>
+          </mat-form-field>
+        </div>  
+    <div>
+          <mat-form-field >
+            <mat-label>Price</mat-label>
+            <input matInput ngModel name = "price" autocomplete="off" type="number" placeholder="Price" required>
+          </mat-form-field>
+          <mat-form-field class="float-right" >
+            <mat-label>Number of Pages</mat-label>
+            <input matInput ngModel name = "pages" autocomplete="off" type="number" placeholder="No. of pages" required>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-light" [disabled]="!bookRecord.form.valid" value="submit">Add</button>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+  </div>
+</form>
+</ng-template>
+
+
+<ng-template #editRecordModel let-modal>
+  <form #editRecord = "ngForm" (ngSubmit) = "updateRecord(editRecord.value, editRecordId)">
+  <div class="modal-header">
+    <h2 class="modal-title">Update Record #{{editRecordId+1}}</h2>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="container">
+        <div>
+          <div>
+          <mat-form-field>
+            <mat-label>Book Name</mat-label>
+            <input matInput name = "bookName" [ngModel]="records[editRecordId].bookName" autocomplete="off" placeholder="Book Name" required>
+          </mat-form-field>
+          <mat-form-field class="float-right">
+            <mat-label>Author</mat-label>
+            <input matInput name = "author" [ngModel]="records[editRecordId].author" autocomplete="off" placeholder="Author" required>
+          </mat-form-field>
+          <mat-form-field >
+            <mat-label>Ratings of the book</mat-label>
+            <input matInput name = "ratings" [ngModel]="records[editRecordId].ratings" autocomplete="off" type="number" placeholder="e.g. 4.5" required>
+          </mat-form-field>
+        </div>  
+    <div>
+          <mat-form-field >
+            <mat-label>Price</mat-label>
+            <input matInput name = "price" [ngModel]="records[editRecordId].price" autocomplete="off" type="number" placeholder="Price" required>
+          </mat-form-field>
+          <mat-form-field class="float-right" >
+            <mat-label>Number of Pages</mat-label>
+            <input matInput name = "pages" [ngModel]="records[editRecordId].pages" autocomplete="off" type="number" placeholder="No. of pages" required>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-light" [disabled]="!editRecord.form.valid" value="submit">Update</button>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+  </div>
+</form>
+</ng-template>
+
+
+  <div class="menu justify-content-center">
+    <button class="button buttonBlack" (click)="openModal(content)">New Record</button>
+
+    <div class="mt-5">
+    <mat-accordion>
+      <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Sort By
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-list>
+          <mat-list-item> <button mat-button (click)="sortBy('bookName')" [disabled]=isDisabled color="primary">Book Name</button> </mat-list-item>
+          <mat-list-item> <button mat-button (click)="sortBy('author')" [disabled]=isDisabled color="primary">Author</button> </mat-list-item>
+          <mat-list-item> <button mat-button (click)="sortBy('ratings')" [disabled]=isDisabled color="primary">Ratings</button> </mat-list-item>
+          <mat-list-item> <button mat-button (click)="sortBy('price')" [disabled]=isDisabled color="primary">Price</button> </mat-list-item>
+          <mat-list-item> <button mat-button (click)="sortBy('pages')" [disabled]=isDisabled color="primary">Number of pages</button> </mat-list-item>
+         </mat-list>
+      </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
+  </div>
+  
+<div class="main p-3">  
+  <div *ngIf="records.length !== 0; else elseBlock">
+  <form>
+    <div>
+    <mat-form-field class="example-full-width">
+      <mat-label>Search</mat-label>
+      <input type="search" matInput [formControl]="filter" autocomplete="off" placeholder="{{records[0].bookName}}">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+  </form>
+
+  
+<table class="table table-striped">
+  <thead>
+  <tr style="background-color: #5f5b5a; color: white;">
+    <th scope="col">#</th>
+    <th scope="col">Book Name</th>
+    <th scope="col">Author</th>
+    <th scope="col">Ratings</th>
+    <th scope="col">Price </th>
+    <th scope="col">No. of Pages</th>
+    <th></th>
+    <th></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let rec of allrecords$ | async; index as i">
+    <th scope="row">{{ i + 1 }}</th>
+    <td> 
+      <ngb-highlight [result]="rec.bookName" [term]="filter.value"></ngb-highlight>
+    </td>
+    <td><ngb-highlight [result]="rec.author" [term]="filter.value"></ngb-highlight></td>
+    <td><ngb-highlight [result]="rec.ratings | number" [term]="filter.value"></ngb-highlight></td>
+    <td><ngb-highlight [result]="rec.price | number" [term]="filter.value"></ngb-highlight></td>
+    <td><ngb-highlight [result]="rec.pages | number" [term]="filter.value"></ngb-highlight></td>
+    <td>
+      <button mat-icon-button color="primary" (click)="openEditModal(editRecordModel, i)" aria-label="Example icon button with a edit icon">
+      <mat-icon>edit</mat-icon>
+    </button>
+  </td> 
+    <td>
+      <button mat-icon-button color="warn" (click)="deleteRecord(i)" aria-label="Example icon button with a delete icon">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </td>
+
+  </tr>
+  </tbody>
+</table>
+</div>
+<ng-template #elseBlock><div class="mat-display-3 m-5">No Record Available!</div></ng-template>
+</div>
+
